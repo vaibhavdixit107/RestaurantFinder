@@ -1,0 +1,129 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Project_Restaurent</title>
+  <link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.4/jquery.mobile-1.4.4.min.css" /> 
+  <script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
+  <script src="http://code.jquery.com/mobile/1.4.4/jquery.mobile-1.4.4.min.js"></script> 
+  <script type="text/javascript" src="http://oauth.googlecode.com/svn/code/javascript/oauth.js"></script>
+  <script type="text/javascript" src="http://oauth.googlecode.com/svn/code/javascript/sha1.js"></script>
+   <style>
+  
+ .main{
+	width:60%;
+	height:20%;
+	display:block;
+	margin-left:20%;
+	margin-right:20%;
+ }
+
+ 
+ </style>
+
+</head>
+
+<body>
+<section id="italian" data-role="page" data-transition="slide">
+
+<header id= "header" data-role="header" data-theme="b"  data-add-back-btn="true" data-position="fixed">
+	<h1>INDIAN RESTAURANTS</h1>
+</header>
+
+<script>
+ var auth = {
+				consumerKey : "6bYY1U8dhgFt17noBW5NXQ",
+				consumerSecret : "LXEV5iVj-Azb12ub7G8kaFWpK5Q",
+				accessToken : "tX6UzxaDaewFyriSB902mFFs4EDUF6Lx",
+				accessTokenSecret : "YpjvnyGiU5JRb6RaPrl0LmmVTjg",
+				serviceProvider : {
+					signatureMethod : "HMAC-SHA1"
+				}
+			};
+			var terms = 'restaurants';
+			var lat=localStorage['lat'];
+			var lon= localStorage['long'];
+			var category = 'mexican';
+			var radius = 20000;
+			var accessor = {
+				consumerSecret : auth.consumerSecret,
+				tokenSecret : auth.accessTokenSecret
+			};
+			parameters = [];
+			parameters.push(['term', terms]);
+			parameters.push(['ll', lat + ',' + lon]);
+			parameters.push(['radius_filter',radius]);
+			parameters.push(['category_filter',category]);
+			parameters.push(['callback', 'cb']);
+			parameters.push(['limit',5]);
+			parameters.push(['sort',1]);
+			parameters.push(['oauth_consumer_key', auth.consumerKey]);
+			parameters.push(['oauth_consumer_secret', auth.consumerSecret]);
+			parameters.push(['oauth_token', auth.accessToken]);
+			parameters.push(['oauth_signature_method', 'HMAC-SHA1']);
+			var message = {
+				'action' : 'http://api.yelp.com/v2/search',
+				'method' : 'GET',
+				'parameters' : parameters
+			};
+			OAuth.setTimestampAndNonce(message);
+			OAuth.SignatureMethod.sign(message, accessor);
+			var parameterMap = OAuth.getParameterMap(message.parameters);
+			parameterMap.oauth_signature = OAuth.percentEncode(parameterMap.oauth_signature)
+			console.log(parameterMap);
+			
+			$.ajax({
+				'url' : message.action,
+				'data' : parameterMap,
+				'cache' : true,
+				'dataType' : 'jsonp',
+				'jsonpCallback' : 'cb',
+				'success' : function(data, textStats, XMLHttpRequest) {
+					$.each(data.businesses, function(key, val){
+							var output='<div data-role="collapsible" id="set">';
+									output += '<h1>' + val.name +'</h1>';	
+									output += (val.image_url) ?
+											  '<img src="' + val.image_url + '" alt="' + val.title + '" >':
+											  '<img src="image/images.png" alt="View Source Logo">';
+									output += '<img src="' + val.rating_img_url_large + '">';		  		  
+									var call= val.display_phone;		  
+									output += (val.display_phone) ? 
+											  '<h4>Phone:</h4>'+' '+"<a href='tel:"+call+"'>" + call + "</a>" :'<h4>Phone:</h4>'+' '+ '<p>' +"Sorry the phone number is not available" +'</p>';			  
+									var distance = 'The restaurant is ' + parseInt(val.distance/1000) + " " + 'KMs';
+									var fixed = val.distance.toFixed(2); 
+									if(val.distance/1000<1){
+									output += '<h4>Distance:</h4>'+' '+'<p>' + 'The restaurant is ' + fixed  + " " + 'Meters' +'</p>';
+									}else{
+									output += '<h4>Distance:</h4>'+' '+'<p>' + distance + '</p>';
+									}
+									output += '<h4>Address:</h4>'+'<h5>'+' '+ val.location.display_address +'</h5>';	
+									var addres=val.location.display_address;
+									output += "<a href='https://www.google.dk/maps/dir//"+addres+"' class='ui-btn' data-theme='a'>" + 'Find Way' + "</a>";
+									output += '</div>';
+							     $( "#set" ).append(output);
+							 });
+							 $(document).ready(function(){
+								$("img").click(function(){
+									$(this).toggleClass("main");
+									});
+								}); 
+							 $("#set").trigger('create');
+							 
+							console.log(data);
+						}
+					});					
+</script>
+    <div data-role="content">
+		<div data-role="collapsibleset" data-theme="b" data-content-theme="a" data-iconpos="right" id="set">
+		    <div data-role="collapsible" id="set1" data-collapsed="true">
+        
+    		</div>
+		</div>
+	</div>
+<footer id= "footer" data-role="footer" data-theme="b" data-position="fixed">
+	<h1>Footer</h1>
+</footer>	
+</section>
+</body>
+</html>

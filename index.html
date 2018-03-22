@@ -1,0 +1,134 @@
+<!doctype HTML>
+<html>
+<head>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.4/jquery.mobile-1.4.4.min.css" />
+	<script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
+	<script src="http://code.jquery.com/mobile/1.4.4/jquery.mobile-1.4.4.min.js"></script>
+	<script type="text/javascript" src="http://oauth.googlecode.com/svn/code/javascript/oauth.js"></script>
+	<script type="text/javascript" src="http://oauth.googlecode.com/svn/code/javascript/sha1.js"></script>
+	
+<script>
+	
+	if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(function(position) {
+       localStorage['long'] = position.coords.longitude; //saving values to local storage
+	   localStorage['lat'] = position.coords.latitude;
+	  
+    });
+  }
+
+</script>	
+<style>
+            #slideshow #slideshowWindow {
+                width:500px;
+                height:257px;
+                margin:0;
+                padding:0;
+                position:relative;
+                overflow:hidden;
+                margin-right:auto;
+                margin-left:auto;
+            }
+            #slideshow #slideshowWindow .slide {
+                margin:0;
+                padding:0;
+                width:500px; 
+                height:257px;
+                float:left;
+                position:relative;
+            }
+</style>
+</head>
+<body>
+<!--First page start-->
+<section id="firstpage" data-role="page" data-transition="slideup">
+	<header id= "header" data-role="header"  data-theme="b" >
+		<h1>Restaurent Finder</h1>
+	</header>
+
+	<article id="firstarticle" data-role="content" data-fullscreen="true">
+		<script type="text/javascript">
+            $(document).ready(function () {
+                
+                var currentPosition = 0;
+                var slideWidth = 500;
+                var slides = $('.slide');
+                var numberOfSlides = slides.length;
+                var slideShowInterval;
+                var speed = 4000;
+
+                slideShowInterval = setInterval(changePosition, speed);
+
+                slides.wrapAll('<div id="slidesHolder"></div>')
+
+                slides.css({'float': 'left'});
+
+                $('#slidesHolder').css('width', slideWidth * numberOfSlides);
+
+                function changePosition() {
+                    if (currentPosition == numberOfSlides - 1) {
+                        currentPosition = 0;
+                    } else {
+                        currentPosition++;
+                    }
+                    moveSlide();
+                }
+                function moveSlide() {
+                    $('#slidesHolder')
+                            .css({'marginLeft': slideWidth * (-currentPosition)});
+                }
+            });
+        </script>
+	
+	 <div id="slideshow">
+            <div id="slideshowWindow">
+
+                <div class="slide">
+                    <img src="image/1.jpg" />
+                </div>
+
+                <div class="slide">
+                    <img src="image/2.jpg" />
+                </div>
+
+                <div class="slide" style>
+                    <img src="image/3.jpg" />
+                </div>
+            </div>
+        </div>
+		<a href="#secondpage" class="ui-btn ui-shadow ui-corner-all" data-theme="b" >Start</a> 
+
+	</article>
+
+	<footer id= "footer" data-role="footer" data-theme="b" data-position="fixed" >
+
+		<h1>Footer</h1>
+	
+	</footer>
+
+</section>
+<!--First page ends-->
+
+<!--Second Page Start-->
+<section id="secondpage" data-role="page" data-transition="slide">
+	<header id= "header" data-role="header" data-theme="b"  data-add-back-btn="true" data-position="fixed">
+		<h1>Restaurent Finder</h1>
+	</header>
+	<article id="article" data-role="content" data-fullscreen="true">
+
+		<ul data-role="controlgroup" data-inset="true" data-filter="true"  id='list'>
+			<a href="chinese1.html" class="ui-btn ui-corner-all ui-btn-b">Chinese</a>
+			<a href="chinese.html" class="ui-btn ui-corner-all ui-btn-b" >Italian</a>
+			<a href="danish.html" class="ui-btn ui-corner-all ui-btn-b">Danish</a>
+			<a href="api.html" class="ui-btn ui-corner-all ui-btn-b">Indian</a>
+		</ul>
+
+	</article>
+	<footer id= "footer" data-role="footer" data-theme="b" data-position="fixed">
+		<h1>Footer</h1>
+	</footer>
+</section>
+<!--Second Page End -->
+</body>
+</html>
